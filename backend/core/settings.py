@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -46,11 +49,46 @@ INSTALLED_APPS = [
     'users',
 ]
 
-# Configuración de Django REST Framework para usar JWT
+# ----------------------------------------------------------------------
+# Django REST Framework
+# ----------------------------------------------------------------------
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+    # (opcional) permisos por defecto
+    "DEFAULT_PERMISSION_CLASSES": (
+        "rest_framework.permissions.IsAuthenticated",
+    ),
+}
+
+# ----------------------------------------------------------------------
+# Simple JWT configuration
+# ----------------------------------------------------------------------
+SIMPLE_JWT = {
+    # Usa tu serializer personalizado para aceptar email y formatear errores
+    "TOKEN_OBTAIN_SERIALIZER": (
+        "users.serializers.login_serializer.CustomTokenObtainPairSerializer"
+    ),
+
+    # Ciclo de vida de los tokens (ajusta a tu política de seguridad)
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=15),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+
+    # Opciones de seguridad
+    "ROTATE_REFRESH_TOKENS": False,
+    "BLACKLIST_AFTER_ROTATION": True,
+
+    # Algoritmo y clave de firma
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": os.environ.get("DJANGO_SECRET_KEY", "unsafe-secret-key"),
+
+    # Headers de autorización
+    "AUTH_HEADER_TYPES": ("Bearer",),
+
+    # Otros ajustes con sus valores por defecto (puedes omitirlos si no cambian)
+    "UPDATE_LAST_LOGIN": False,
+    "AUTH_TOKEN_CLASSES": ("rest_framework_simplejwt.tokens.AccessToken",),
 }
 
 MIDDLEWARE = [
