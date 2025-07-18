@@ -14,4 +14,10 @@ export const registrationSchema = z.object({
   path: ["password2"], 
 });
 
+export const loginSchema = z.object({
+  email: z.string().email({ message: 'Por favor, ingrese un correo electrónico válido.' }),
+  password: z.string().min(1, { message: 'Por favor, ingrese su contraseña.' }),
+});
+
 export type RegistrationFormValues = z.infer<typeof registrationSchema>;
+export type LoginFormValues = z.infer<typeof loginSchema>;
