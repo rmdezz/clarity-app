@@ -12,7 +12,8 @@ const buttonVariants = cva(
         secondary: 'bg-transparent border border-neutral-300 text-neutral-900 hover:bg-neutral-50 active:bg-neutral-100',
       },
       size: {
-        default: 'h-12 px-8 py-3', // 48px de alto
+        default: 'h-12 px-8 py-3 text-base', // 48px de alto
+        sm: 'h-9 px-4 rounded-md text-sm', // 36px de alto, más pequeño
       },
     },
     defaultVariants: {

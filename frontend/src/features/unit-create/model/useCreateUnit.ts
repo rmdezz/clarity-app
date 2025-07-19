@@ -2,7 +2,6 @@
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
-import { useSessionStore } from '@/entities/user/model/session.store';
 import { UnitFormValues } from './schemas';
 import { createUnit } from './api';
 import { IProperty } from '@/entities/property/model/types';
@@ -10,10 +9,9 @@ import { IUnit } from '@/entities/unit/model/types';
 
 export const useCreateUnit = (propertyId: string) => {
   const queryClient = useQueryClient();
-  const accessToken = useSessionStore((state) => state.accessToken);
 
   return useMutation({
-    mutationFn: (data: UnitFormValues) => createUnit({ propertyId, data, accessToken: accessToken! }),
+    mutationFn: (data: UnitFormValues) => createUnit({ propertyId, data }),
     onSuccess: (newUnit: IUnit) => {
       toast.success(`Unidad '${newUnit.name}' creada con éxito.`);
       

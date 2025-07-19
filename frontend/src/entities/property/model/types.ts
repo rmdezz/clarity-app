@@ -9,3 +9,9 @@ export interface IProperty {
   updated_at: string;
   units: IUnit[]; // Añadir el array de unidades
 }
+
+export interface IPropertyListItem {
+  id: number;
+  name: string;
+  address: string;
+}

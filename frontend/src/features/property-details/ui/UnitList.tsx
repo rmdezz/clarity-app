@@ -1,10 +1,12 @@
 import { IUnit } from '@/entities/unit/model/types';
+import { UnitListItem } from './UnitListItem';
 
 interface UnitListProps {
   units: IUnit[];
+  onAssignTenant: (unit: IUnit) => void;
 }
 
-export const UnitList = ({ units }: UnitListProps) => {
+export const UnitList = ({ units, onAssignTenant  }: UnitListProps) => {
   if (units.length === 0) {
     return (
       <div className="text-center text-neutral-500 py-10 px-6 bg-white rounded-lg border border-dashed">
@@ -15,11 +17,9 @@ export const UnitList = ({ units }: UnitListProps) => {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {units.map((unit) => (
-        <div key={unit.id} className="bg-white p-4 rounded-lg border flex justify-between items-center transition-shadow hover:shadow-sm">
-          <span className="font-medium text-neutral-800">{unit.name}</span>
-        </div>
+        <UnitListItem key={unit.id} unit={unit} onAssignTenant={onAssignTenant} />
       ))}
     </div>
   );

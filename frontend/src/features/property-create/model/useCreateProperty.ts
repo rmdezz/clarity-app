@@ -5,15 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 
-import { useSessionStore } from '@/entities/user/model/session.store';
 import { PropertyFormValues, propertySchema } from './schemas';
 import { createProperty } from './api';
 import toast from 'react-hot-toast';
 
 export const useCreateProperty = () => {
   const router = useRouter();
-  // Necesitamos el accessToken para autenticar la llamada a la API.
-  const accessToken = useSessionStore((state) => state.accessToken);
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertySchema),
@@ -22,7 +19,7 @@ export const useCreateProperty = () => {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: PropertyFormValues) => createProperty(data, accessToken!), // Pasamos el token
+    mutationFn: (data: PropertyFormValues) => createProperty(data), // Token handled by httpClient
     onSuccess: () => {
       // 1. DISPARAR LA NOTIFICACIÓN DE ÉXITO.
       // Este es el nuevo Criterio de Aceptación.
@@ -59,11 +56,7 @@ export const useCreateProperty = () => {
   });
 
   const onSubmit = (values: PropertyFormValues) => {
-    // Si no hay token, no intentar la mutación y quizás mostrar un error global.
-    if (!accessToken) {
-      form.setError('root.serverError', { type: 'manual', message: 'No estás autenticado. Por favor, inicia sesión.' });
-      return;
-    }
+    // Auth check now handled by httpClient and global error handler
     mutation.mutate(values);
   };
 

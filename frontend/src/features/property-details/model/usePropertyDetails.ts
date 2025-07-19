@@ -10,7 +10,7 @@ export const usePropertyDetails = (propertyId: string) => {
   return useQuery({
     // La clave de caché incluye el ID de la propiedad para ser única.
     queryKey: ['property', propertyId],
-    queryFn: () => getPropertyDetails(propertyId, accessToken!),
+    queryFn: () => getPropertyDetails(propertyId),
     // La consulta solo se activará si el propertyId y el accessToken existen.
     enabled: !!propertyId && !!accessToken,
   });
