@@ -11,18 +11,27 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  // Leemos el `accessToken` como el indicador principal de una sesión activa.
   const accessToken = useSessionStore((state) => state.accessToken);
+  const hasHydrated = useSessionStore((state) => state._hasHydrated);
 
   useEffect(() => {
-    // [CA-03.3] Verificación de Seguridad - simplificada para tests
-    if (!accessToken) {
+    // Solo verificar autenticación después de que el store se haya hidratado
+    if (hasHydrated && !accessToken) {
       router.push('/login');
       return;
     }
-  }, [accessToken, router]);
+  }, [accessToken, hasHydrated, router]);
 
-  // Si no hay token, mostrar estado de carga mientras redirige
+  // Mostrar loading mientras el store se hidrata
+  if (!hasHydrated) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-neutral-50">
+        <p>Cargando...</p>
+      </div>
+    );
+  }
+
+  // Si no hay token después de la hidratación, mostrar estado de verificación
   if (!accessToken) {
     return (
       <div className="flex justify-center items-center h-screen bg-neutral-50">

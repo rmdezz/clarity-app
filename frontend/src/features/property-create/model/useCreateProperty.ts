@@ -23,7 +23,7 @@ export const useCreateProperty = () => {
 
   const mutation = useMutation({
     mutationFn: (data: PropertyFormValues) => createProperty(data, accessToken!), // Pasamos el token
-    onSuccess: (data) => {
+    onSuccess: () => {
       // 1. DISPARAR LA NOTIFICACIÓN DE ÉXITO.
       // Este es el nuevo Criterio de Aceptación.
       toast.success('Propiedad creada con éxito.');
@@ -48,7 +48,7 @@ export const useCreateProperty = () => {
             }
           }
         }
-      } catch (e) {
+      } catch {
         // Si no es un JSON válido, mostrar un error genérico del servidor.
         form.setError('root.serverError', { 
           type: 'manual', 

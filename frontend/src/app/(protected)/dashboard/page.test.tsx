@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@/test-utils';
+import { render, screen } from '@/test-utils';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MemoryRouterProvider } from 'next-router-mock/MemoryRouterProvider';
@@ -42,8 +42,8 @@ describe.skip('Protected Routes & Logout', () => {
 
   describe('Cuando el usuario NO está autenticado', () => {
     it('[CA-03.3] debe redirigir a /login', async () => {
-      const mockRouter = require('next-router-mock').default;
-      const pushSpy = vi.spyOn(mockRouter, 'push');
+      const mockRouter = await import('next-router-mock');
+      const pushSpy = vi.spyOn(mockRouter.default, 'push');
       
       // Verificar que el store está limpio
       const storeState = useSessionStore.getState();

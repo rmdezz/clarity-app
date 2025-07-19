@@ -1,5 +1,5 @@
-import React, { BaseSyntheticEvent, JSX } from 'react'; 
-import type { Meta, StoryObj } from '@storybook/react'; // No necesitamos StoryContext aquí si usamos wrapper
+import React, { BaseSyntheticEvent } from 'react'; 
+import type { Meta, StoryObj } from '@storybook/react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 // Importación corregida de `action` para Storybook 7+
