@@ -23,3 +23,19 @@ class Property(models.Model):
 
     def __str__(self):
         return f'{self.name} ({self.user.username})'
+
+class Unit(models.Model):
+    """
+    Representa una unidad individual (ej. apartamento, oficina) dentro de una Propiedad.
+    """
+    name = models.CharField(max_length=255, blank=False, null=False, help_text="El nombre o número de la unidad (ej. Apto 101)")
+    
+    # Clave foránea que establece la relación con Property.
+    # related_name='units' nos permite acceder a las unidades desde una instancia de Property (ej. property.units.all())
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='units')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.name} ({self.property.name})'
