@@ -2,28 +2,32 @@
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Property
-from .serializers import PropertySerializer, UnitSerializer
+from .serializers import PropertySerializer, UnitSerializer, PropertySummarySerializer
 from django.shortcuts import get_object_or_404
 
 class PropertyListCreateAPIView(generics.ListCreateAPIView):
     """
-    Vista para listar las propiedades de un usuario y para crear nuevas propiedades.
+    Vista para listar (GET) y crear (POST) propiedades.
+    Utiliza diferentes serializadores para cada acción para optimizar el rendimiento.
     """
-    serializer_class = PropertySerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        """Asegura que los usuarios solo vean sus propias propiedades."""
+        return Property.objects.filter(user=self.request.user).order_by('name')
+
+    def get_serializer_class(self):
         """
-        Sobrescribe el queryset para asegurar que los usuarios
-        solo puedan ver y gestionar sus propias propiedades.
+        Devuelve el serializador apropiado según el método de la petición.
         """
-        return Property.objects.filter(user=self.request.user)
+        if self.request.method == 'GET':
+            # Para listado, usamos el serializador de resumen (ligero).
+            return PropertySummarySerializer
+        # Para creación, usamos el serializador completo para la respuesta.
+        return PropertySerializer
 
     def perform_create(self, serializer):
-        """
-        Sobrescribe el método de creación para inyectar automáticamente
-        al usuario autenticado como propietario de la nueva propiedad.
-        """
+        """Asigna el usuario autenticado a la nueva propiedad."""
         serializer.save(user=self.request.user)
 
 class PropertyRetrieveAPIView(generics.RetrieveAPIView):
@@ -47,3 +51,4 @@ class UnitCreateAPIView(generics.CreateAPIView):
         # Si la propiedad no existe O no pertenece al usuario, se devuelve un 404.
         prop = get_object_or_404(Property, pk=property_pk, user=self.request.user)
         serializer.save(property=prop)
+

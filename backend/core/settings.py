@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     # Local Apps
     'users',
     'properties',
+    'tenants',
 ]
 
 # ----------------------------------------------------------------------
