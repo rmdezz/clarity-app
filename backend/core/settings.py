@@ -44,9 +44,11 @@ INSTALLED_APPS = [
     # 3rd Party Apps
     'rest_framework',
     'rest_framework_simplejwt',
-
+    'rest_framework_simplejwt.token_blacklist',
+    
     # Local Apps
     'users',
+    'properties',
 ]
 
 # ----------------------------------------------------------------------

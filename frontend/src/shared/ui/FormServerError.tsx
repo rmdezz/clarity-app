@@ -11,8 +11,9 @@ export const FormServerError = ({ message }: FormServerErrorProps) => {
 
   return (
     <div
-      className="p-4 mb-4 text-sm rounded-lg bg-error-light text-error-dark"
+      className="p-3 mb-4 text-sm rounded-lg bg-error-light text-error-dark"
       role="alert"
+      data-testid="form-server-error" 
     >
       <span className="font-medium">Error:</span> {message}
     </div>

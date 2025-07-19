@@ -1,4 +1,4 @@
-'use client'; // Este hook se usará en un Componente Cliente
+'use client';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,28 +7,33 @@ import { useRouter } from 'next/navigation';
 
 import { useSessionStore } from '@/entities/user/model/session.store';
 import { registrationSchema, RegistrationFormValues } from './schemas';
-import { registerUser } from './api'; // Importamos la función de API que acabamos de crear
+import { registerUser } from './api';
 
 export const useRegistration = () => {
   const router = useRouter();
-  const setToken = useSessionStore((state) => state.setToken);
+  
+  // 1. CORRECCIÓN: Obtener la acción `setTokens` del store en lugar de la obsoleta `setToken`.
+  const setTokens = useSessionStore((state) => state.setTokens);
   
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
-    defaultValues: { email: '', password: '' },
-    mode: 'onBlur', // Para validar cuando el usuario deja el campo
+    // Asegurarse de que los valores por defecto incluyan todos los campos del formulario
+    defaultValues: { email: '', password: '', password2: '' }, 
+    mode: 'onBlur',
   });
 
   const mutation = useMutation({
-    mutationFn: registerUser, // Aquí conectamos la función de la API
+    mutationFn: registerUser,
     onSuccess: (data) => {
-      // data aquí es lo que devuelve nuestra función registerUser en caso de éxito
-      setToken(data.token);      // [CA-01.4] Almacenar el token
-      router.push('/dashboard'); // [CA-01.4] Redirigir
+      // 2. CORRECCIÓN: Al tener éxito, llamar a `setTokens` con el objeto completo.
+      //    Se asume que la API de registro ahora devuelve un objeto con `access` y `refresh`.
+      //    El Criterio de Aceptación [CA-01.3] ahora implica recibir ambos tokens.
+      setTokens({ access: data.access, refresh: data.refresh });
+      
+      // La redirección sigue siendo la misma.
+      router.push('/dashboard');
     },
     onError: (error: Error) => {
-      // error aquí es lo que lanzamos en la función de la API
-      // [CA-01.4] Mostrar error del servidor en el formulario
       form.setError('root.serverError', { type: 'manual', message: error.message });
     },
   });
@@ -40,7 +45,6 @@ export const useRegistration = () => {
   return {
     form,
     onSubmit: form.handleSubmit(onSubmit),
-    // Exportamos explícitamente el estado desde la mutación para que el componente de UI lo use
     isLoading: mutation.isPending,
     serverError: form.formState.errors.root?.serverError?.message,
   };

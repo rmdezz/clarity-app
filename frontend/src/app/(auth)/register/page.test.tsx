@@ -49,8 +49,8 @@ describe('RegisterPage', () => {
   it('[CA-01.4] Debe llamar a la API, guardar el token y redirigir en un registro exitoso', async () => {
     const user = userEvent.setup();
     const mockToken = 'fake-jwt-token-123';
-    vi.mocked(api.registerUser).mockResolvedValueOnce({ token: mockToken });
-    const setTokenSpy = vi.spyOn(useSessionStore.getState(), 'setToken');
+    vi.mocked(api.registerUser).mockResolvedValueOnce({ access: mockToken, refresh: mockToken });
+    const setTokensSpy = vi.spyOn(useSessionStore.getState(), 'setTokens');
     
     render(<RegisterPage />);
 
@@ -66,7 +66,7 @@ describe('RegisterPage', () => {
         password: 'passwordValido123',
         password2: 'passwordValido123', // El payload ahora es correcto
       });
-      expect(setTokenSpy).toHaveBeenCalledWith(mockToken);
+      expect(setTokensSpy).toHaveBeenCalledWith({ access: mockToken, refresh: mockToken });
       expect(mockRouterPush).toHaveBeenCalledWith('/dashboard');
     });
   });

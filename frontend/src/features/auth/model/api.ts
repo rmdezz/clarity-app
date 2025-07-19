@@ -41,3 +41,27 @@ export const loginUser = async (data: LoginFormValues) => {
 
   return response.json();
 };
+
+export const logoutUser = async (tokens: { accessToken: string; refreshToken: string }) => {
+  if (!tokens.accessToken || !tokens.refreshToken) {
+    console.error("Logout no puede proceder: falta el access o refresh token.");
+    return;
+  }
+
+  try {
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        // 1. Autenticar la petición con el access token.
+        'Authorization': `Bearer ${tokens.accessToken}`,
+      },
+      // 2. Enviar el refresh token en el cuerpo para su invalidación.
+      body: JSON.stringify({
+        refresh: tokens.refreshToken,
+      }),
+    });
+  } catch (error) {
+    console.error("La llamada al endpoint de logout ha fallado:", error);
+  }
+};

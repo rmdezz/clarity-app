@@ -11,7 +11,7 @@ import { loginUser } from './api';
 
 export const useLogin = () => {
   const router = useRouter();
-  const setToken = useSessionStore((state) => state.setToken);
+  const setTokens = useSessionStore((state) => state.setTokens);
   
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -23,7 +23,7 @@ export const useLogin = () => {
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      setToken(data.token);      // [CA-02.3]
+      setTokens({ access: data.access, refresh: data.refresh });      // [CA-02.3]
       router.push('/dashboard'); // [CA-02.3]
     },
     onError: (error: Error) => {

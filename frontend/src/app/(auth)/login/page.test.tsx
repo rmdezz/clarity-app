@@ -44,8 +44,8 @@ describe('LoginPage', () => {
     const user = userEvent.setup();
     const mockToken = 'new-jwt-token-456';
     // Simulamos una respuesta exitosa de la API
-    vi.mocked(api.loginUser).mockResolvedValueOnce({ token: mockToken });
-    const setTokenSpy = vi.spyOn(useSessionStore.getState(), 'setToken');
+    vi.mocked(api.loginUser).mockResolvedValueOnce({ access: mockToken, refresh: mockToken });
+    const setTokensSpy = vi.spyOn(useSessionStore.getState(), 'setTokens');
     
     render(<LoginPage />);
 
@@ -61,7 +61,7 @@ describe('LoginPage', () => {
         password: 'correct-password',
       });
       // Verificamos que el token se guardó en el store
-      expect(setTokenSpy).toHaveBeenCalledWith(mockToken);
+      expect(setTokensSpy).toHaveBeenCalledWith({ access: mockToken, refresh: mockToken });
       // Verificamos la redirección
       expect(mockRouterPush).toHaveBeenCalledWith('/dashboard');
     });

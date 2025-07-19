@@ -1,13 +1,14 @@
 # backend/users/views/auth_views.py
 
 from users.serializers.login_serializer import CustomTokenObtainPairSerializer
-from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
+from rest_framework import generics, status, views
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
+
 
 # La nueva ruta de importación, relativa a la ubicación de este archivo.
 from ..serializers.registration_serializer import UserRegistrationSerializer
@@ -79,3 +80,25 @@ class LoginAPIView(TokenObtainPairView):
             raise exc
 
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
+class LogoutAPIView(views.APIView):
+    """
+    Vista para el cierre de sesión (logout).
+    Invalida el refresh token del usuario añadiéndolo a la lista negra.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.data.get("refresh")
+
+        if not refresh_token:
+            return Response({"error": "Refresh token es requerido."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            # Devolvemos 204 No Content, que es idiomático para una acción exitosa sin cuerpo de respuesta.
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except TokenError:
+            # Esto ocurre si el token ya es inválido (caducado, malformado, etc.)
+            return Response({"error": "Token inválido o caducado."}, status=status.HTTP_400_BAD_REQUEST)
