@@ -1,0 +1,71 @@
+# --- 📦 PROYECTO clarity-app ---
+
+# 🔒 Carpetas privadas/personalizadas
+.bmad-core/
+.claude/
+.cursor/
+web-bundles/
+
+# --- 📁 FRONTEND (Next.js, React, Node.js) ---
+node_modules/
+.next/
+dist/
+out/
+coverage/
+.vite/
+.storybook-out/
+storybook-static/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- 🐍 BACKEND (Django, Python) ---
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.egg-info/
+*.env
+*.env.*
+*.venv/
+.venv/
+env/
+ENV/
+Pipfile.lock
+migrations/
+local_settings.py
+celerybeat-schedule
+instance/
+
+# --- ⚙️ Configuraciones del IDE / editor ---
+# VSCode
+.vscode/
+# JetBrains (PyCharm, WebStorm, etc.)
+.idea/
+*.iml
+
+# --- 🧪 Pruebas ---
+htmlcov/
+.tox/
+.nox/
+.pytest_cache/
+coverage.xml
+test-results/
+
+# --- ⚙️ Otros archivos comunes ---
+.DS_Store
+Thumbs.db
+
+# --- 🔐 Seguridad ---
+secrets.*
+*.pem
+*.key
+*.crt
+certs/
