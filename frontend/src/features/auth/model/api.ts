@@ -2,7 +2,7 @@ import { LoginFormValues, RegistrationFormValues } from './schemas';
 
 // Esta función es responsable únicamente de comunicarse con el endpoint de Django.
 export const registerUser = async (data: RegistrationFormValues) => {
-  const response = await fetch('/api/auth/register', { // Nota: Usamos una ruta relativa para el proxy de Next.js
+  const response = await fetch('/api/auth/register/', { // Nota: Usamos una ruta relativa para el proxy de Next.js
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -23,7 +23,7 @@ export const registerUser = async (data: RegistrationFormValues) => {
 };
 
 export const loginUser = async (data: LoginFormValues) => {
-  const response = await fetch('/api/auth/login', {
+  const response = await fetch('/api/auth/login/', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -49,7 +49,7 @@ export const logoutUser = async (tokens: { accessToken: string; refreshToken: st
   }
 
   try {
-    await fetch('/api/auth/logout', {
+    await fetch('/api/auth/logout/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

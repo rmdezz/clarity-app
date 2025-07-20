@@ -6,12 +6,13 @@ import { getPropertyDetails } from './api';
 
 export const usePropertyDetails = (propertyId: string) => {
   const accessToken = useSessionStore((state) => state.accessToken);
+  const hasHydrated = useSessionStore((state) => state._hasHydrated);
 
   return useQuery({
     // La clave de caché incluye el ID de la propiedad para ser única.
     queryKey: ['property', propertyId],
     queryFn: () => getPropertyDetails(propertyId),
     // La consulta solo se activará si el propertyId y el accessToken existen.
-    enabled: !!propertyId && !!accessToken,
+    enabled: !!propertyId && !!accessToken && hasHydrated,
   });
 };

@@ -10,6 +10,8 @@ const config: Config = {
     './src/features/**/*.{js,ts,jsx,tsx,mdx}',
     './src/entities/**/*.{js,ts,jsx,tsx,mdx}',
     './src/shared/**/*.{js,ts,jsx,tsx,mdx}', // MUY IMPORTANTE
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}', // shadcn components
+    './src/lib/**/*.{js,ts,jsx,tsx,mdx}', // shadcn utils
   ],
   theme: {
   	extend: {

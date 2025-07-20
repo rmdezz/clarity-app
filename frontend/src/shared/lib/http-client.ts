@@ -14,9 +14,15 @@ export class TokenExpiredError extends Error {
 
 // Type guard for checking TokenExpiredError
 export const isTokenExpiredError = (error: unknown): error is TokenExpiredError => {
-  return error instanceof TokenExpiredError || 
-         (error && typeof error === 'object' && 'isTokenExpiredError' in error && 
-          (error as { isTokenExpiredError: boolean }).isTokenExpiredError === true);
+  return (
+    error instanceof TokenExpiredError ||
+    (
+      typeof error === 'object' &&
+      error !== null &&
+      'isTokenExpiredError' in error &&
+      (error as { isTokenExpiredError?: boolean }).isTokenExpiredError === true
+    )
+  );
 };
 
 export class ApiError extends Error {
@@ -40,17 +46,18 @@ export const createHttpClient = () => {
     
     // Auto-inject auth token from Zustand store
     const accessToken = useSessionStore.getState().accessToken;
-    const authHeaders = accessToken 
-      ? { 'Authorization': `Bearer ${accessToken}` }
-      : {};
+    
+    // Don't set Content-Type for FormData - let browser set it with boundary
+    const isFormData = options.body instanceof FormData;
+    const headersObj: Record<string, string> = {
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+      ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}),
+      ...(typeof headers === 'object' && !Array.isArray(headers) ? headers as Record<string, string> : {}),
+    };
 
     const response = await fetch(url, {
       ...restOptions,
-      headers: {
-        'Content-Type': 'application/json',
-        ...authHeaders,
-        ...headers,
-      },
+      headers: headersObj,
     });
 
     if (!response.ok) {
@@ -105,12 +112,16 @@ export const createHttpClient = () => {
   const get = <T = unknown>(url: string, options?: RequestInit): Promise<T> => 
     request<T>(url, { ...options, method: 'GET' });
 
-  const post = <T = unknown>(url: string, data?: unknown, options?: RequestInit): Promise<T> => 
-    request<T>(url, { 
+  const post = <T = unknown>(url: string, data?: unknown, options?: RequestInit): Promise<T> => {
+    // Handle FormData differently - don't stringify it
+    const body = data instanceof FormData ? data : (data ? JSON.stringify(data) : undefined);
+    
+    return request<T>(url, { 
       ...options, 
       method: 'POST',
-      body: data ? JSON.stringify(data) : undefined 
+      body 
     });
+  };
 
   const put = <T = unknown>(url: string, data?: unknown, options?: RequestInit): Promise<T> => 
     request<T>(url, { 

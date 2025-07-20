@@ -16,10 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from properties.views import BillingCycleRetrieveAPIView, ExpenseListCreateAPIView
+from tenants.views import TenancyRetrieveUpdateAPIView, TenancyEndAPIView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls')),
     path('api/properties/', include('properties.urls')),
     path('api/units/', include('tenants.urls')),
+    path('api/billing-cycles/<int:pk>/', BillingCycleRetrieveAPIView.as_view(), name='billing-cycle-detail'),
+    path('api/billing-cycles/<int:cycle_id>/expenses/', ExpenseListCreateAPIView.as_view(), name='expense-list-create'),
+    path('api/tenancies/<int:pk>/', TenancyRetrieveUpdateAPIView.as_view(), name='tenancy-detail'),
+    path('api/tenancies/<int:pk>/end/', TenancyEndAPIView.as_view(), name='tenancy-end'),
 ]
+
+# Serve media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
